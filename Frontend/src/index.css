@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #121212;
+  --color-card: #1e1e1e;
+  --color-primary: #ff4c4c;
+  --color-secondary: #4a90e2;
+  --color-textprimary: #ffffff;
+  --color-textsecondary: #b0b0b0;
+  --color-success: #4caf50;
+  --color-error: #f44336;
+}
+
+/* Custom scrollbar styles */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px; /* thinner scrollbar */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent; /* track background */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #4b5563; /* dark gray */
+  border-radius: 10px;
+  border: 2px solid transparent; /* padding around thumb */
+  background-clip: content-box;
+}
+
+/* For Firefox */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #4b5563 transparent;
+}

@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { videoContext } from "../contexts/VideoContext";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
 
@@ -13,7 +13,7 @@ function UploadPage() {
   });
   const [message, setMessage] = useState("");
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   // useEffect(() => {
   //   if (!loading) {

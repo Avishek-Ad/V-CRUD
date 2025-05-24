@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: process.env.CLIENT_URL, // frontend URL, NOT '*'
+    origin: ["http://localhost:5173", "https://v-crud-client.vercel.app"], // frontend URL, NOT '*'
     credentials: true, // allow cookies to be sent
   })
 );
@@ -24,7 +24,7 @@ app.use("/api/videos", videoAuth);
 app.use("/api/comments", commentAuth);
 
 app.get("/", (req, res) => {
-  res.send("Hello World");
+  res.send("Hello World changed");
 });
 
 export default app;

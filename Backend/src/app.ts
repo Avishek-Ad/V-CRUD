@@ -19,9 +19,9 @@ app.use(
   })
 );
 
-app.use("/api/users", userAuth);
-app.use("/api/videos", videoAuth);
-app.use("/api/comments", commentAuth);
+app.use("/api/users/", userAuth);
+app.use("/api/videos/", videoAuth);
+app.use("/api/comments/", commentAuth);
 
 app.get("/", (req, res) => {
   res.send("Hello World changed");

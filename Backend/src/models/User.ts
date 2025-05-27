@@ -33,6 +33,11 @@ const userSchema = new mongoose.Schema(
         ref: "Video",
       },
     ],
+    comments: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "Comment",
+      default: [],
+    },
   },
   { timestamps: true }
 );

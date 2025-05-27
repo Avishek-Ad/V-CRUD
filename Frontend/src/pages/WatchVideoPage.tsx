@@ -28,6 +28,7 @@ const dummyComments = [
     text: "This video is amazing! Learned a lot, thanks!",
     likes: 12,
     dislikes: 1,
+    createdAt: "2022-01-01T12:34:56Z",
   },
   {
     _id: "c2",
@@ -39,6 +40,7 @@ const dummyComments = [
     text: "I disagree with some points made here, but overall good content.",
     likes: 5,
     dislikes: 3,
+    createdAt: "2022-01-02T09:12:34Z",
   },
   {
     _id: "c3",
@@ -50,6 +52,7 @@ const dummyComments = [
     text: "Can someone explain the part at 3:45? I didn’t quite get it.",
     likes: 7,
     dislikes: 0,
+    createdAt: "2022-01-03T15:45:12Z",
   },
   {
     _id: "c4",
@@ -61,6 +64,7 @@ const dummyComments = [
     text: "Great tutorial, very clear and concise. Subscribed!",
     likes: 20,
     dislikes: 0,
+    createdAt: "2022-01-04T10:23:45Z",
   },
   {
     _id: "c5",
@@ -72,6 +76,7 @@ const dummyComments = [
     text: "Not my type of content, but well made.",
     likes: 2,
     dislikes: 5,
+    createdAt: "2022-01-05T14:56:78Z",
   },
 ];
 
@@ -92,7 +97,7 @@ function WatchVideoPage() {
   const [share, setShare] = useState(false);
   const [progress, setProgress] = useState(0);
   const [showSignIn, setShowSignIn] = useState(false);
-  const [showComments, setShowComments] = useState(false);
+  const [showComments, setShowComments] = useState(true);
   const [hasCountedView, setHasCountedView] = useState(false);
   const [volume, setVolume] = useState(
     Number(localStorage.getItem("volume")) || 1
@@ -199,7 +204,7 @@ function WatchVideoPage() {
                 controls={false}
                 onPlay={setPlaying.bind(null, true)}
                 autoPlay
-                muted={false}
+                muted={true}
                 className="w-full h-auto sm:h-[560px] rounded-xl shadow-lg object-cover"
                 onClick={() => {
                   playing && pauseNplay();
@@ -455,17 +460,32 @@ function WatchVideoPage() {
                   dummyComments.map((comment) => (
                     <div
                       key={comment._id}
-                      className="bg-zinc-100 dark:bg-zinc-800 p-4 rounded-lg shadow-sm"
+                      className="flex items-start space-x-4"
                     >
-                      <h3 className="font-semibold">{comment.user.username}</h3>
-                      <p className="mt-1">{comment.text}</p>
-                      <div className="flex space-x-4 mt-2 text-zinc-600 dark:text-zinc-400">
-                        <button className="flex items-center gap-1 hover:text-blue-600 transition">
-                          <ThumbsUp size={16} /> {comment.likes}
-                        </button>
-                        <button className="flex items-center gap-1 hover:text-red-600 transition">
-                          <ThumbsDown size={16} /> {comment.dislikes}
-                        </button>
+                      {/* Placeholder for user profile picture */}
+                      <div className="w-10 h-10 rounded-full bg-gray-300 dark:bg-zinc-700 flex-shrink-0" />
+
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2">
+                          <h3 className="font-medium text-sm">
+                            {comment.user.username}
+                          </h3>
+                          <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                            • {comment.createdAt}
+                          </span>
+                        </div>
+                        <p className="text-sm text-zinc-800 dark:text-zinc-200 mt-1">
+                          {comment.text}
+                        </p>
+
+                        <div className="flex space-x-4 text-zinc-600 dark:text-zinc-400 mt-2 text-sm">
+                          <button className="flex items-center gap-1 hover:text-blue-600 transition">
+                            <ThumbsUp size={16} /> {comment.likes}
+                          </button>
+                          <button className="flex items-center gap-1 hover:text-red-600 transition">
+                            <ThumbsDown size={16} /> {comment.dislikes}
+                          </button>
+                        </div>
                       </div>
                     </div>
                   ))

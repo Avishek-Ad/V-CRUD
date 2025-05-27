@@ -7,19 +7,28 @@ const commentSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    text: {
+    content: {
       type: String,
       required: true,
     },
     likes: {
-      type: Number,
-      required: true,
-      default: 0,
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "User",
+      default: [],
     },
     dislikes: {
-      type: Number,
-      required: true,
-      default: 0,
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "User",
+      default: [],
+    },
+    video: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Video",
+    },
+    replies: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "Comment",
+      default: [],
     },
   },
   { timestamps: true }

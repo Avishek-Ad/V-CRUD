@@ -11,11 +11,11 @@ import { protectRoute } from "../middlewares/authMiddleware";
 
 const router = express.Router();
 
-router.get("/comments/:vid", protectRoute, getAllComments);
-router.post("/:vid", createComment);
-router.put("/:id", updateComment);
-router.delete("/:id", deleteComment);
+router.get("/:vid", getAllComments);
+router.post("/:vid", protectRoute, createComment);
+router.put("/:id", protectRoute, updateComment);
+router.delete("/:id", protectRoute, deleteComment);
 router.get("/reply/:id", getReplies);
-router.post("/reply/:id", createReply);
+router.post("/reply/:id", protectRoute, createReply);
 
 export default router;

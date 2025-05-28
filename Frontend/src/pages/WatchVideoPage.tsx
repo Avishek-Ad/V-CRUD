@@ -13,72 +13,76 @@ import {
   Play,
   Volume2,
   VolumeOff,
+  ArrowRight,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import NavBar from "../components/NavBar";
 import { userContext } from "../contexts/UserContext";
+import { commentContext } from "../contexts/CommentContext";
 
-const dummyComments = [
-  {
-    _id: "c1",
-    user: {
-      _id: "u1",
-      username: "john_doe",
-      avatar: "https://example.com/avatars/john.png",
-    },
-    text: "This video is amazing! Learned a lot, thanks!",
-    likes: 12,
-    dislikes: 1,
-    createdAt: "2022-01-01T12:34:56Z",
-  },
-  {
-    _id: "c2",
-    user: {
-      _id: "u2",
-      username: "jane_smith",
-      avatar: "https://example.com/avatars/jane.png",
-    },
-    text: "I disagree with some points made here, but overall good content.",
-    likes: 5,
-    dislikes: 3,
-    createdAt: "2022-01-02T09:12:34Z",
-  },
-  {
-    _id: "c3",
-    user: {
-      _id: "u3",
-      username: "video_fan_89",
-      avatar: "https://example.com/avatars/fan89.png",
-    },
-    text: "Can someone explain the part at 3:45? I didn’t quite get it.",
-    likes: 7,
-    dislikes: 0,
-    createdAt: "2022-01-03T15:45:12Z",
-  },
-  {
-    _id: "c4",
-    user: {
-      _id: "u4",
-      username: "tech_guru",
-      avatar: "https://example.com/avatars/techguru.png",
-    },
-    text: "Great tutorial, very clear and concise. Subscribed!",
-    likes: 20,
-    dislikes: 0,
-    createdAt: "2022-01-04T10:23:45Z",
-  },
-  {
-    _id: "c5",
-    user: {
-      _id: "u5",
-      username: "casual_viewer",
-      avatar: "https://example.com/avatars/casual.png",
-    },
-    text: "Not my type of content, but well made.",
-    likes: 2,
-    dislikes: 5,
-    createdAt: "2022-01-05T14:56:78Z",
-  },
-];
+// const dummyComments = [
+//   {
+//     _id: "c1",
+//     user: {
+//       _id: "u1",
+//       username: "john_doe",
+//       avatar: "https://example.com/avatars/john.png",
+//     },
+//     text: "This video is amazing! Learned a lot, thanks!",
+//     likes: 12,
+//     dislikes: 1,
+//     createdAt: "2022-01-01T12:34:56Z",
+//   },
+//   {
+//     _id: "c2",
+//     user: {
+//       _id: "u2",
+//       username: "jane_smith",
+//       avatar: "https://example.com/avatars/jane.png",
+//     },
+//     text: "I disagree with some points made here, but overall good content.",
+//     likes: 5,
+//     dislikes: 3,
+//     createdAt: "2022-01-02T09:12:34Z",
+//   },
+//   {
+//     _id: "c3",
+//     user: {
+//       _id: "u3",
+//       username: "video_fan_89",
+//       avatar: "https://example.com/avatars/fan89.png",
+//     },
+//     text: "Can someone explain the part at 3:45? I didn’t quite get it.",
+//     likes: 7,
+//     dislikes: 0,
+//     createdAt: "2022-01-03T15:45:12Z",
+//   },
+//   {
+//     _id: "c4",
+//     user: {
+//       _id: "u4",
+//       username: "tech_guru",
+//       avatar: "https://example.com/avatars/techguru.png",
+//     },
+//     text: "Great tutorial, very clear and concise. Subscribed!",
+//     likes: 20,
+//     dislikes: 0,
+//     createdAt: "2022-01-04T10:23:45Z",
+//   },
+//   {
+//     _id: "c5",
+//     user: {
+//       _id: "u5",
+//       username: "casual_viewer",
+//       avatar: "https://example.com/avatars/casual.png",
+//     },
+//     text: "Not my type of content, but well made.",
+//     likes: 2,
+//     dislikes: 5,
+//     createdAt: "2022-01-05T14:56:78Z",
+//   },
+// ];
 
 function WatchVideoPage() {
   const {
@@ -89,6 +93,15 @@ function WatchVideoPage() {
     dislikeVideo,
     increaseVideoViews,
   } = useContext(videoContext)!;
+  const {
+    comments,
+    createComment,
+    fetchComments,
+    loading: loadingComments,
+    fetchReplies,
+    createReply,
+    replies,
+  } = useContext(commentContext)!;
   const { user } = useContext(userContext)!;
   const { id: videoId } = useParams();
   const navigate = useNavigate();
@@ -102,6 +115,15 @@ function WatchVideoPage() {
   const [volume, setVolume] = useState(
     Number(localStorage.getItem("volume")) || 1
   ); // 1 means 100% volume
+
+  const [newComment, setNewComment] = useState("");
+  const [newReply, setNewReply] = useState("");
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [showReplyTo, setShowReplyTo] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchComments(videoId!);
+  }, [videoId, showComments === true]);
 
   useEffect(() => {
     if (user !== undefined && videoId) {
@@ -183,6 +205,30 @@ function WatchVideoPage() {
     } else {
       setShowSignIn(true);
     }
+  };
+
+  const handleComment = () => {
+    if (user && currentVideo && videoId) {
+      createComment(newComment, videoId);
+      setNewComment("");
+    } else {
+      setShowSignIn(true);
+    }
+  };
+
+  const handleReply = (commentId: string) => {
+    if (user && currentVideo && videoId) {
+      createReply(newReply, commentId);
+      setNewReply("");
+      setShowReplyTo(null);
+    } else {
+      setShowSignIn(true);
+    }
+  };
+
+  const handleShowReply = (commentId: string) => {
+    setShowReplyTo(showReplyTo === commentId ? null : commentId);
+    fetchReplies(commentId);
   };
 
   return (
@@ -283,20 +329,6 @@ function WatchVideoPage() {
 
           {/* Action Buttons */}
           <div className="absolute top-30 right-2 sm:right-[10px] flex flex-col items-center space-y-6">
-            {/* Volume Control */}
-            {/* <div className="flex flex-col items-center text-white mt-6">
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.01"
-                value={volume}
-                onChange={(e) => setVolume(parseFloat(e.target.value))}
-                className="w-24 accent-primary"
-              />
-              <span className="text-xs mt-1">{Math.round(volume * 100)}%</span>
-            </div> */}
-
             {/* Like */}
             <div className="flex flex-col items-center text-white">
               <motion.button
@@ -456,14 +488,19 @@ function WatchVideoPage() {
               </h2>
 
               <div className="flex-1 overflow-y-auto pr-2 space-y-6 custom-scrollbar">
-                {dummyComments && dummyComments.length ? (
-                  dummyComments.map((comment) => (
+                {comments && comments.length ? (
+                  comments.map((comment) => (
                     <div
                       key={comment._id}
                       className="flex items-start space-x-4"
                     >
                       {/* Placeholder for user profile picture */}
-                      <div className="w-10 h-10 rounded-full bg-gray-300 dark:bg-zinc-700 flex-shrink-0" />
+                      {/* <div className="w-10 h-10 rounded-full bg-gray-300 dark:bg-zinc-700 flex-shrink-0" /> */}
+                      <img
+                        src={comment.user.avatar}
+                        alt={comment.user.username}
+                        className="w-10 h-10 rounded-full bg-gray-300 dark:bg-zinc-700 flex-shrink-0"
+                      />
 
                       <div className="flex-1">
                         <div className="flex items-center space-x-2">
@@ -475,7 +512,7 @@ function WatchVideoPage() {
                           </span>
                         </div>
                         <p className="text-sm text-zinc-800 dark:text-zinc-200 mt-1">
-                          {comment.text}
+                          {comment.content}
                         </p>
 
                         <div className="flex space-x-4 text-zinc-600 dark:text-zinc-400 mt-2 text-sm">
@@ -485,7 +522,90 @@ function WatchVideoPage() {
                           <button className="flex items-center gap-1 hover:text-red-600 transition">
                             <ThumbsDown size={16} /> {comment.dislikes}
                           </button>
+                          <div className="flex items-center gap-1">
+                            <button
+                              className="flex items-center gap-1 hover:text-primary transition"
+                              onClick={() =>
+                                setReplyingTo(
+                                  replyingTo === comment._id
+                                    ? null
+                                    : comment._id
+                                )
+                              }
+                            >
+                              {replyingTo === comment._id ? "cancel" : "reply"}
+                            </button>
+                          </div>
                         </div>
+                        {replyingTo === comment._id && (
+                          <div className="flex items-center gap-2 mt-2">
+                            <input
+                              type="text"
+                              placeholder="Add a Reply..."
+                              value={newReply}
+                              onChange={(e) => setNewReply(e.target.value)}
+                              className="w-full border text-sm border-zinc-200 dark:border-zinc-700 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primary"
+                            />
+                            <button
+                              className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/80 transition"
+                              onClick={() => handleReply(comment._id)}
+                            >
+                              <ArrowRight size={16} />
+                            </button>
+                          </div>
+                        )}
+
+                        {comment.replies.length > 0 && (
+                          <div
+                            className="flex items-center text-sm hover:text-primary transition mt-1"
+                            onClick={() => handleShowReply(comment._id)}
+                          >
+                            {showReplyTo === comment._id ? (
+                              <ChevronUp size={18} />
+                            ) : (
+                              <ChevronDown size={18} />
+                            )}
+                            {comment.replies.length} replies
+                          </div>
+                        )}
+
+                        {showReplyTo === comment._id &&
+                          replies.length > 0 &&
+                          replies.map((reply) => (
+                            <div
+                              key={comment._id}
+                              className="flex items-start space-x-2 mt-4"
+                            >
+                              <img
+                                src={reply.user.avatar}
+                                alt={reply.user.username}
+                                className="w-8 h-8 rounded-full bg-gray-300 dark:bg-zinc-700 flex-shrink-0"
+                              />
+
+                              <div className="flex-1">
+                                <div className="flex items-center space-x-2">
+                                  <h3 className="font-medium text-sm">
+                                    {reply.user.username}
+                                  </h3>
+                                  <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                                    • {reply.createdAt}
+                                  </span>
+                                </div>
+                                <p className="text-sm text-zinc-800 dark:text-zinc-200 mt-1">
+                                  {reply.content}
+                                </p>
+
+                                <div className="flex space-x-4 text-zinc-600 dark:text-zinc-400 text-sm mt-2">
+                                  <button className="flex items-center gap-1 hover:text-blue-600 transition">
+                                    <ThumbsUp size={14} /> {comment.likes}
+                                  </button>
+                                  <button className="flex items-center gap-1 hover:text-red-600 transition">
+                                    <ThumbsDown size={14} /> {comment.dislikes}
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
                       </div>
                     </div>
                   ))
@@ -494,6 +614,25 @@ function WatchVideoPage() {
                     No comments yet
                   </p>
                 )}
+              </div>
+              <div className="flex items-center gap-2 mt-2">
+                <input
+                  type="text"
+                  placeholder="Add a comment..."
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  className="w-full border border-zinc-200 dark:border-zinc-700 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+                <button
+                  className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/80 transition"
+                  onClick={handleComment}
+                >
+                  {loadingComments ? (
+                    <LoaderCircle className="animate-spin w-5 h-5" />
+                  ) : (
+                    <ArrowRight size={24} />
+                  )}
+                </button>
               </div>
             </div>
           </motion.div>

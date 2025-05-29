@@ -2,6 +2,10 @@
 
 V-CRUD is a modern video streaming web application that allows users to discover, share, and stream high-quality videos with a sleek and user-friendly interface.
 
+## GoTo V-CRUD
+
+[GoTo V-CRUD](https://v-crud-client.vercel.app/)
+
 ## Features
 
 - User authentication (Register, Login, Logout)

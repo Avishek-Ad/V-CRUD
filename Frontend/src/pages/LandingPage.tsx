@@ -48,7 +48,9 @@ function LandingPage() {
           </button>
           <button
             className="text-sm text-gray-400 hover:text-white transition"
-            onClick={() => window.open("https://github.com/yourrepo", "_blank")}
+            onClick={() =>
+              window.open("https://github.com/Avishek-Ad/V-CRUD", "_blank")
+            }
           >
             View on GitHub →
           </button>

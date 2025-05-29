@@ -250,7 +250,7 @@ function WatchVideoPage() {
                 controls={false}
                 onPlay={setPlaying.bind(null, true)}
                 autoPlay
-                muted={true}
+                muted={false}
                 className="w-full h-auto sm:h-[560px] rounded-xl shadow-lg object-cover"
                 onClick={() => {
                   playing && pauseNplay();

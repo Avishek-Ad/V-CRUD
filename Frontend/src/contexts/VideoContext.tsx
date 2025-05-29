@@ -397,7 +397,7 @@ const VideoProvider = ({ children }: VideoProviderProps) => {
       if (response.data.success) {
         setMessage(response.data.message);
         setError("");
-        await fetchVideos(page);
+        fetchVideosByUser(page);
       } else {
         setError(response.data.message);
         setMessage("");

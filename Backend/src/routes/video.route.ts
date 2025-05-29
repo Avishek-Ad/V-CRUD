@@ -27,7 +27,7 @@ router.post("/dislike/:id", protectRoute, dislikeVideo);
 router.post("/addview/:id", increaseViewCount);
 router.get("/user/:id", protectRoute, getVideoByIdWithUser);
 router.get("/:id", getVideoByIdWithoutUser);
-// router.delete("/delete/:id", deleteVideo);
+router.delete("/delete/:id", deleteVideo);
 // router.put("/edit/:id", editVideoDetails);
 
 export default router;

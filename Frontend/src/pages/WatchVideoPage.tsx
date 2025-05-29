@@ -110,7 +110,7 @@ function WatchVideoPage() {
   const [share, setShare] = useState(false);
   const [progress, setProgress] = useState(0);
   const [showSignIn, setShowSignIn] = useState(false);
-  const [showComments, setShowComments] = useState(true);
+  const [showComments, setShowComments] = useState(false);
   const [hasCountedView, setHasCountedView] = useState(false);
   const [volume, setVolume] = useState(
     Number(localStorage.getItem("volume")) || 1

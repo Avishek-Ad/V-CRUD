@@ -37,13 +37,13 @@ const setCookie = (
   res.cookie("accessToken", accessToken, {
     httpOnly: true, //prevents xss attacks
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict", // prevents csrf attacks
+    sameSite: "none", // prevents csrf attacks
     maxAge: 15 * 60 * 1000, // 15 minutes
   });
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true, //prevents xss attacks
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict", // prevents csrf attacks
+    sameSite: "none", // prevents csrf attacks
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7days
   });
 };

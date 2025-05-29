@@ -58,6 +58,7 @@ const UserProvider = ({ children }: UserProviderProps) => {
       if (response.data.success) {
         setError("");
         setMessage(response.data.message);
+        console.log(response.data.message);
         getuser();
       } else {
         setError(response.data.message);

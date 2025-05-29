@@ -5,6 +5,8 @@ import userAuth from "./routes/user.route";
 import videoAuth from "./routes/video.route";
 import commentAuth from "./routes/comment.route";
 import dotenv from "dotenv";
+import connectDB from "./configs/db";
+import { dbConnectMiddleware } from "./middlewares/dbConnect";
 dotenv.config();
 
 const app = express();
@@ -18,6 +20,18 @@ app.use(
     credentials: true, // allow cookies to be sent
   })
 );
+
+// app.use(async (req, res, next) => {
+//   await dbConnectMiddleware(req, res, next);
+// });
+
+// (async () => {
+//   try {
+//     await connectDB();
+//   } catch (error) {
+//     console.error("MongoDB connection failed:", error);
+//   }
+// })();
 
 app.use("/api/users/", userAuth);
 app.use("/api/videos/", videoAuth);

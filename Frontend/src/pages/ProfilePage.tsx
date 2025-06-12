@@ -43,6 +43,9 @@ function ProfilePage() {
               {user?.role}
             </p>
           </div>
+          {/* <button className="px-6 py-2 rounded-lg bg-primary text-white hover:bg-primary/80 transition">
+            Edit Profile
+          </button> */}
         </div>
 
         {/* Video List Section */}

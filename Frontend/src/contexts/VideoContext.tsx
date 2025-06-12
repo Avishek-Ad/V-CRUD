@@ -357,6 +357,7 @@ const VideoProvider = ({ children }: VideoProviderProps) => {
       console.log(response.data);
     } catch (error) {
       setError("Video Upload Failed");
+      setMessage("");
       console.log("Error in uploadVideo", error);
     } finally {
       setLoading(false);

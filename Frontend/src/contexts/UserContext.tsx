@@ -1,5 +1,6 @@
 import { createContext, useState } from "react";
 import axiosInstance from "../libs/axios";
+import { AxiosError } from "axios";
 
 type UserContextProps = {
   user: any;
@@ -19,6 +20,10 @@ type UserContextProps = {
 
 type UserProviderProps = {
   children: React.ReactNode;
+};
+
+type ErrorResponse = {
+  message: string;
 };
 
 export const userContext = createContext<UserContextProps | undefined>(
@@ -97,9 +102,14 @@ const UserProvider = ({ children }: UserProviderProps) => {
         setError(response.data.message);
         setMessage("");
       }
-    } catch (error) {
+    } catch (err) {
+      const error = err as AxiosError;
       console.log("Error in register", error);
-      setError("User Register Failed");
+      const message =
+        (error?.response?.data as ErrorResponse)?.message ||
+        "Something went wrong during registration.";
+      setError(message);
+      setMessage("");
     } finally {
       setLoading(false);
     }

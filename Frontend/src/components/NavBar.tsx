@@ -1,4 +1,4 @@
-import { SearchIcon, Plus, LogIn, LogOut } from "lucide-react";
+import { SearchIcon, Plus, LogIn, LogOut, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { videoContext } from "../contexts/VideoContext";
@@ -10,7 +10,11 @@ function NavBar() {
   const [query, setQuery] = useState(localStorage.getItem("query") || "");
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleSubmit = (
+    e:
+      | React.MouseEvent<HTMLButtonElement, MouseEvent>
+      | React.KeyboardEvent<HTMLInputElement>
+  ) => {
     e.preventDefault();
     if (query) {
       localStorage.setItem("query", query);
@@ -18,6 +22,13 @@ function NavBar() {
       searchVideos(query, 1, true);
       navigate("/search");
     }
+  };
+
+  const removeQuery = () => {
+    localStorage.removeItem("query");
+    setQuery("");
+    setSearchQuery("");
+    navigate("/home");
   };
 
   useEffect(() => {
@@ -48,15 +59,20 @@ function NavBar() {
             placeholder="Search videos..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSubmit(e)}
             className="flex-grow bg-transparent outline-none text-sm sm:w-72 md:w-96 px-1 py-2 text-textprimary placeholder-textsecondary"
           />
-          <div
+          <button
             className="flex items-center rounded-r-full px-4 py-2 bg-gray-600 hover:cursor-pointer"
             onClick={(e) => handleSubmit(e)}
           >
             <SearchIcon className="w-5 h-5 text-gray-400" />
-          </div>
+          </button>
         </div>
+        <X
+          className="relative top-2 right-20 hover:cursor-pointer w-5 h-5 text-gray-400"
+          onClick={() => removeQuery()}
+        />
       </div>
 
       {/* Action Buttons */}

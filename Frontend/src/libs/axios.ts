@@ -1,4 +1,9 @@
 import axios from "axios";
+import type { AxiosRequestConfig } from "axios";
+
+interface CustomAxiosRequestConfig extends AxiosRequestConfig {
+  _retry?: boolean;
+}
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
@@ -8,20 +13,40 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-axiosInstance.interceptors.request.use(
+axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const originalRequest = error.config;
+    const originalRequest = error.config as CustomAxiosRequestConfig;
+    const errorCode = error.response?.data?.code;
+    const isRefreshRoute = originalRequest.url?.includes(
+      "/users/refresh-token"
+    );
 
-    if (error.response.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
+    console.log("error", errorCode);
+
+    if (
+      originalRequest._retry ||
+      isRefreshRoute ||
+      window.location.pathname === "/login"
+    ) {
+      return Promise.reject(error);
+    }
+
+    if (
+      error.response?.status === 401 &&
+      (errorCode === "ACCESS_TOKEN_EXPIRED" || errorCode === "NO_ACCESS_TOKEN")
+    ) {
       try {
-        await axiosInstance.post("/users/refresh", { withCredentials: true });
+        originalRequest._retry = true;
+        await axios.post(
+          `${import.meta.env.VITE_BACKEND_URL}/users/refresh-token`,
+          {},
+          { withCredentials: true }
+        );
         return axiosInstance(originalRequest);
-      } catch (error) {
-        console.error("Refresh token expired or invalid");
+      } catch (refreshError) {
         window.location.href = "/login";
-        return Promise.reject(error);
+        return Promise.reject(refreshError);
       }
     }
 

@@ -9,8 +9,12 @@ const protectRoute = async (
 ): Promise<void> => {
   try {
     const accessToken = req.cookies.accessToken;
+    const refreshToken = req.cookies.refreshToken;
     if (!accessToken) {
-      res.status(401).json({ message: "Unauthorized - No access token found" });
+      res.status(401).json({
+        message: "Unauthorized - No access token found",
+        code: refreshToken ? "NO_ACCESS_TOKEN" : "NO_TOKEN",
+      });
       return;
     }
     try {
@@ -20,16 +24,20 @@ const protectRoute = async (
       ) as jwt.JwtPayload;
       const user = await User.findById(decode?.userId);
       if (!user) {
-        res.status(401).json({ message: "Unauthorized - User not found" });
+        res.status(401).json({
+          message: "Unauthorized - User not found",
+          code: "USER_NOT_FOUND",
+        });
         return;
       }
       (req as any).user = user;
       next();
     } catch (error) {
       if (error instanceof jwt.TokenExpiredError) {
-        res
-          .status(401)
-          .json({ message: "Unauthorized - Access token expired" });
+        res.status(401).json({
+          message: "Unauthorized - Access token expired",
+          code: "ACCESS_TOKEN_EXPIRED",
+        });
         return;
       }
       throw error;

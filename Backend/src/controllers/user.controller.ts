@@ -37,31 +37,34 @@ const setCookie = (
   res.cookie("accessToken", accessToken, {
     httpOnly: true, //prevents xss attacks
     secure: process.env.NODE_ENV === "production",
-    sameSite: "none", // prevents csrf attacks
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "strict", // prevents csrf attacks
     maxAge: 15 * 60 * 1000, // 15 minutes
   });
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true, //prevents xss attacks
     secure: process.env.NODE_ENV === "production",
-    sameSite: "none", // prevents csrf attacks
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "strict", // prevents csrf attacks
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7days
   });
 };
 
 const register = async (req: Request, res: Response): Promise<void> => {
   try {
+    console.log("inside register");
     const { username, email, password } = req.body;
 
     const imageUrl = req.file?.path;
     const publicId = req.file?.filename;
 
     if (!imageUrl || !publicId) {
+      console.log("Image not uploaded");
       res.status(400).json({ message: "Image not uploaded" });
       return;
     }
 
     const userExists = await User.findOne({ email });
     if (userExists) {
+      console.log("User already exists");
       res.status(400).json({ message: "User already exists" });
       return;
     }
@@ -77,12 +80,15 @@ const register = async (req: Request, res: Response): Promise<void> => {
     await storeRefreshToken(user._id, refreshToken);
     setCookie(res, accessToken, refreshToken);
 
+    console.log("User created successfully");
+
     res.status(201).json({
       success: true,
       message: "User created successfully",
     });
     return;
   } catch (error) {
+    console.log("error");
     console.log("Error in register", error);
     res.status(500).json({ message: error });
     return;
@@ -148,6 +154,7 @@ const logout = async (req: Request, res: Response): Promise<void> => {
 
 const refreshToken = async (req: Request, res: Response): Promise<void> => {
   try {
+    console.log("");
     const refreshToken = req.cookies.refreshToken;
     if (!refreshToken) {
       res.status(401).json({ message: "No refresh token Provided" });
@@ -175,7 +182,7 @@ const refreshToken = async (req: Request, res: Response): Promise<void> => {
     res.cookie("accessToken", accessToken, {
       httpOnly: true, //prevents xss attacks
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict", // prevents csrf attacks
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict", // prevents csrf attacks
       maxAge: 15 * 60 * 1000, // 15 minutes
     });
     res.json({ success: true, message: "Access token refreshed" });

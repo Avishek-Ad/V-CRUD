@@ -6,6 +6,8 @@ import {
   deleteComment,
   createReply,
   getReplies,
+  likeComment,
+  dislikeComment,
 } from "../controllers/comment.controller";
 import { protectRoute } from "../middlewares/authMiddleware";
 
@@ -17,5 +19,7 @@ router.put("/:id", protectRoute, updateComment);
 router.delete("/:id", protectRoute, deleteComment);
 router.get("/reply/:id", getReplies);
 router.post("/reply/:id", protectRoute, createReply);
+router.post("/like/:id", protectRoute, likeComment);
+router.post("/dislike/:id", protectRoute, dislikeComment);
 
 export default router;

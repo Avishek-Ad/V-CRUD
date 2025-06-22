@@ -3,6 +3,76 @@ import Comment from "../models/Comment";
 import Video from "../models/video";
 import User from "../models/User";
 
+const likeComment = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId = (req as any).user._id;
+    const commentId = req.params.id;
+
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      res.status(404).send({ message: "Comment not found" });
+      return;
+    }
+    if (comment.likes.some((id) => id.toString() === userId.toString())) {
+      comment.likes = comment.likes.filter(
+        (id) => id.toString() !== userId.toString()
+      );
+    } else {
+      comment.likes.push(userId);
+      if (comment.dislikes.some((id) => id.toString() === userId.toString())) {
+        comment.dislikes = comment.dislikes.filter(
+          (id) => id.toString() !== userId.toString()
+        );
+      }
+    }
+
+    await comment.save();
+    res
+      .status(200)
+      .send({ success: true, message: "Comment liked successfully" });
+    return;
+  } catch (error) {
+    console.log("Error in likeComment controller", error);
+    res.status(500).send({ message: "Internal Server Error", error });
+    return;
+  }
+};
+
+const dislikeComment = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId = (req as any).user._id;
+    const commentId = req.params.id;
+
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      res.status(404).send({ message: "Comment not found" });
+      return;
+    }
+    if (comment.dislikes.some((id) => id.toString() === userId.toString())) {
+      comment.dislikes = comment.dislikes.filter(
+        (id) => id.toString() !== userId.toString()
+      );
+    } else {
+      comment.dislikes.push(userId);
+      if (comment.likes.some((id) => id.toString() === userId.toString())) {
+        comment.likes = comment.likes.filter(
+          (id) => id.toString() !== userId.toString()
+        );
+      }
+    }
+
+    await comment.save();
+    res
+      .status(200)
+      .send({ success: true, message: "Comment disliked successfully" });
+    return;
+  } catch (error) {
+    console.log("Error in dislikeComment controller", error);
+    res.status(500).send({ message: "Internal Server Error", error });
+    return;
+  }
+};
+
 const getReplies = async (req: Request, res: Response): Promise<void> => {
   try {
     const commentId = req.params.id;
@@ -230,4 +300,6 @@ export {
   deleteComment,
   createReply,
   getReplies,
+  likeComment,
+  dislikeComment,
 };
